@@ -27,13 +27,7 @@ const IndexTemplate = ({ data, pageContext }) => {
     <Layout title={pageTitle} description={siteSubtitle}>
       <Sidebar isIndex />
       <Page>
-        <Feed edges={edges} />
-        <Pagination
-          prevPagePath={prevPagePath}
-          nextPagePath={nextPagePath}
-          hasPrevPage={hasPrevPage}
-          hasNextPage={hasNextPage}
-        />
+        {/*<Feed edges={edges} />*/}
       </Page>
     </Layout>
   );
