@@ -1,0 +1,125 @@
+{
+  "pretty": true,
+  "multipass": true,
+  "indent": 2,
+  "plugins": [
+    {
+      "removeDoctype": true
+    },
+    {
+      "removeXMLProcInst": true
+    },
+    {
+      "removeComments": true
+    },
+    {
+      "removeMetadata": true
+    },
+    {
+      "removeXMLNS": true
+    },
+    {
+      "removeUselessDefs": true
+    },
+    {
+      "removeEditorsNSData": true
+    },
+    {
+      "cleanupAttrs": true
+    },
+    {
+      "removeEmptyAttrs": true
+    },
+    {
+      "removeHiddenElems": true
+    },
+    {
+      "removeEmptyText": true
+    },
+    {
+      "removeEmptyContainers": true
+    },
+    {
+      "removeViewBox": false
+    },
+    {
+      "cleanUpEnableBackground": true
+    },
+    {
+      "convertStyleToAttrs": true
+    },
+    {
+      "convertColors": true
+    },
+    {
+      "convertPathData": true
+    },
+    {
+      "convertTransform": true
+    },
+    {
+      "removeUnknownsAndDefaults": true
+    },
+    {
+      "removeNonInheritableGroupAttrs": true
+    },
+    {
+      "removeUselessStrokeAndFill": true
+    },
+    {
+      "removeUnusedNS": true
+    },
+    {
+      "cleanupIDs": true
+    },
+    {
+      "cleanupNumericValues": true
+    },
+    {
+      "moveElemsAttrsToGroup": true
+    },
+    {
+      "moveGroupAttrsToElems": true
+    },
+    {
+      "collapseGroups": true
+    },
+    {
+      "removeRasterImages": true
+    },
+    {
+      "mergePaths": true
+    },
+    {
+      "convertShapeToPath": true
+    },
+    {
+      "sortAttrs": true
+    },
+    {
+      "removeTitle": true
+    },
+    {
+      "removeDesc": true
+    },
+    {
+      "removeDimensions": false
+    },
+    {
+      "inlineStyles": true
+    },
+    {
+      "removeAttrs": {
+        "attrs": [
+          "data.*"
+        ]
+      }
+    },
+    {
+      "removeStyleElement": false
+    },
+    {
+      "removeScriptElement": false
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { graphql, StaticQuery } from 'gatsby';
 import styles from './Sidebar.module.scss';
+import Logo from '../svg/imgs/Logo';
 
 export const PureSidebar = ({ data, isIndex }) => {
   const {
@@ -12,7 +13,9 @@ export const PureSidebar = ({ data, isIndex }) => {
   return (
     <div className={styles['sidebar']}>
       <div className={styles['sidebar__inner']}>
-
+        <div className={styles['sidebar__logo__container']}>
+          <Logo className={styles['sidebar__logo']}/>
+        </div>
       </div>
     </div>
   );

@@ -2,12 +2,38 @@
 @import '../../assets/scss/mixins';
 
 .sidebar {
-    width: 140px;
+    width: 100px;
     height: 100%;
     background-color: $color-white;
     border-right: 1px solid $color-sidebar-border;
+    position: fixed;
     &__inner {
         position: relative;
-        padding: 25px 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    &__logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        &__container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            padding: 25px 0;
+            display: flex;
+            justify-content: center;
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                height: 1px;
+                width: 70%;
+                margin: 0 auto;
+                background: $color-sidebar-border;
+            }
+        }
     }
 }

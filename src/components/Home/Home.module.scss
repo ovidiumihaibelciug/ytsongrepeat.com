@@ -1,0 +1,20 @@
+@import '../../assets/scss/variables';
+@import '../../assets/scss/mixins';
+
+.home {
+  padding-top: 140px;
+  padding-left: 150px;
+  padding-right: 100px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  > div {
+    flex: 1;
+  }
+  &__main-content {
+    flex: 2 !important;
+    display: flex;
+    justify-content: center;
+  }
+}

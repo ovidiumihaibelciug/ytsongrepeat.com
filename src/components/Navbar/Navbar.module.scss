@@ -1,0 +1,71 @@
+@import '../../assets/scss/variables';
+@import '../../assets/scss/mixins';
+
+.navbar {
+  height: 98px;
+  width: calc(100% - 99px);
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: $color-white;
+  border-bottom: 1px solid $color-sidebar-border;
+  border-left: 1px solid darken($color-sidebar-border, 2%);
+  &__inner {
+    height: 100%;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  &__search {
+    height: 100% !important;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    width: 50%;
+    &__icon {
+      color: $color-navbar-elements;
+      font-size: 1.4rem;
+      margin-right: -10px;
+      z-index: 2;
+    }
+    &__input {
+      padding-left: 20px;
+      border: none;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+      outline: none;
+      font-size: 1.4rem;
+      color: $color-navbar-elements;
+      font-family: 'Work Sans', sans-serif;
+      margin-top: -1px;
+      &::placeholder {
+        font-size: 1.4rem;
+        color: $color-navbar-elements;
+      }
+    }
+  }
+  &__profile {
+    flex: 1;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    &__settings {
+      font-size: 2.1rem;
+      color: $color-navbar-elements;
+      cursor: pointer;
+      &__container {
+        height: 100%;
+        padding-left: 30px;
+        padding-right: 10px;
+        border-left: 1px solid $color-sidebar-border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
