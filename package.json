@@ -79,7 +79,8 @@
     "react-disqus-comments": "^1.4.0",
     "react-dom": "^16.8.1",
     "react-fontawesome": "^1.6.1",
-    "react-helmet": "^5.2.0"
+    "react-helmet": "^5.2.0",
+    "react-icons": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "7.3.4",
