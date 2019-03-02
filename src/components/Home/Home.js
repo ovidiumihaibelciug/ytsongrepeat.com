@@ -65,12 +65,6 @@ class Home extends Component {
         .catch((err) => console.log(err));
     };
 
-    _onReady(event) {
-      // access to player in all event handlers via event.target
-      event.target.pauseVideo();
-    }
-
-
     render() {
       const {
         videoId, start, end, seconds
