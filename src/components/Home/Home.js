@@ -1,19 +1,30 @@
 import React, { Component } from 'react';
-import { Range } from 'rc-slider';
+import axios from 'axios';
+import Slider from 'rc-slider';
 import { FiEye, FiRepeat } from 'react-icons/fi';
+import {
+  parse, toSeconds
+} from 'iso8601-duration';
+import moment from 'moment';
+import YouTube from 'react-youtube';
 import styles from './Home.module.scss';
-import { YouTubeGetID } from '../../utils/get-youtube-id';
+import { getYoutubeId } from '../../utils';
+import { YOUTUBE_KEY } from '../../utils/keys';
+
+const { createSliderWithTooltip } = Slider;
+const Range = createSliderWithTooltip(Slider.Range);
 
 class Home extends Component {
     state = {
       start: 0,
       end: 100,
+      seconds: 100,
       videoId: '',
+      videoInfo: ''
     };
 
     componentDidUpdate(prevProps) {
       if (this.props.search !== prevProps.search) {
-        console.log(this.props.search);
         this.handleSearch();
         this.setState({
           search: this.props.search
@@ -26,57 +37,112 @@ class Home extends Component {
       const regex = new RegExp('http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\\?‌​=]*)?', 'g');
 
       if (regex.test(search)) {
-        const videoId = YouTubeGetID(search);
+        const videoId = getYoutubeId(search);
+        this.getVideoInfo(videoId);
         this.setState({
           videoId
         });
       }
     };
 
+    getVideoInfo = (videoId) => {
+      axios.get(`https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet,contentDetails&id=${videoId}&key=${YOUTUBE_KEY}`)
+        .then(({ data }) => {
+          let seconds = 100;
+          if (data) {
+            const { items } = data;
+            const { contentDetails } = items[0];
+            const { duration } = contentDetails;
+            seconds = toSeconds(parse(duration));
+          }
+          this.setState({
+            start: 0,
+            end: seconds,
+            seconds,
+            videoInfo: data,
+          });
+        })
+        .catch((err) => console.log(err));
+    };
+
+    _onReady(event) {
+      // access to player in all event handlers via event.target
+      event.target.pauseVideo();
+    }
+
 
     render() {
-      const { videoId } = this.state;
+      const {
+        videoId, start, end, seconds
+      } = this.state;
+
+      const opts = {
+        height: '100%',
+        width: '100%',
+        playerVars: { // https://developers.google.com/youtube/player_parameters
+          autoplay: 1,
+          loop: 1,
+          start,
+          end
+        }
+      };
+
       return (
-            <div className={styles['home']}>
-                <div></div>
-                <div className={styles['home__main-content']}>
-                    <div className={styles['player']}>
-                        <div className={styles['player__design']} />
-                        <iframe
-                            loop
-                            width="100%"
-                            height="100%"
-                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&rel=0&iv_load_policy=3&playlist=${videoId}`}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen>
-                        </iframe>
-                    </div>
-                    <div className={styles['player__info']}>
-                        <div className={styles['player__info__description']}>
-                            <div className={styles['player__info__description__item']}>
-                                <FiEye className={styles['player__info__description__item__icon']} />
-                                <div className={styles['player__info__description__item__text']}>
-                                    7,234,002 views
-                                </div>
-                            </div>
-                            <div className={styles['player__info__description__item']}>
-                                <FiRepeat className={styles['player__info__description__item__icon']} />
-                                <div className={styles['player__info__description__item__text']}>
-                                    3,456 repeats
-                                </div>
+          <div className={styles['home']}>
+            <div></div>
+            <div className={styles['home__main-content']}>
+                <YouTube
+                    containerClassName={styles['player']}
+                    videoId={videoId}
+                    opts={opts}
+                    onEnd={ (event) => {
+                      console.log(event.target);
+                      event.target.seekTo(start);
+                    }
+                    }
+                />
+                <div className={styles['player__info']}>
+                    <div className={styles['player__info__description']}>
+                        <div className={styles['player__info__description__item']}>
+                            <FiEye className={styles['player__info__description__item__icon']} />
+                            <div className={styles['player__info__description__item__text']}>
+                                7,234,002 views
                             </div>
                         </div>
-                        <div className={styles['player__info__slider']}>
-                            <Range defaultValue={[0, 100]} />
-                            <div className={styles['player__info__slider__description']}>
-                                Loop any section of the video using the slider!
+                        <div className={styles['player__info__description__item']}>
+                            <FiRepeat className={styles['player__info__description__item__icon']} />
+                            <div className={styles['player__info__description__item__text']}>
+                                3,456 repeats
                             </div>
+                        </div>
+                    </div>
+                    <div className={styles['player__info__slider']}>
+                        <Range
+                            min={0}
+                            max={seconds}
+                            defaultValue={[start, end]}
+                            value={[start, end]}
+                            onChange={([start, end]) => {
+                              this.setState({
+                                start,
+                                end
+                              });
+                            }}
+                            tipFormatter={(value) => moment.utc(value * 1000).format('HH:mm:ss')} />
+                        <div className={styles['player__info__slider__description']}>
+                            Loop any section of the video using the slider!
                         </div>
                     </div>
                 </div>
-                <div></div>
             </div>
+            <div className={styles['home__right-side']}>
+                <div className={styles['home__right-side__inner']}>
+                    <div className={[styles['box'], styles['home__video-info']].join(' ')}>
+                        dasdad
+                    </div>
+                </div>
+            </div>
+        </div>
       );
     }
 }
