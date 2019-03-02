@@ -1,11 +1,42 @@
 import React, { Component } from 'react';
-import styles from './Home.module.scss';
 import { Range } from 'rc-slider';
 import { FiEye, FiRepeat } from 'react-icons/fi';
+import styles from './Home.module.scss';
+import { YouTubeGetID } from '../../utils/get-youtube-id';
 
 class Home extends Component {
+    state = {
+      start: 0,
+      end: 100,
+      videoId: '',
+    };
+
+    componentDidUpdate(prevProps) {
+      if (this.props.search !== prevProps.search) {
+        console.log(this.props.search);
+        this.handleSearch();
+        this.setState({
+          search: this.props.search
+        });
+      }
+    }
+
+    handleSearch = () => {
+      const { search } = this.props;
+      const regex = new RegExp('http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\\?‌​=]*)?', 'g');
+
+      if (regex.test(search)) {
+        const videoId = YouTubeGetID(search);
+        this.setState({
+          videoId
+        });
+      }
+    };
+
+
     render() {
-        return (
+      const { videoId } = this.state;
+      return (
             <div className={styles['home']}>
                 <div></div>
                 <div className={styles['home__main-content']}>
@@ -15,7 +46,7 @@ class Home extends Component {
                             loop
                             width="100%"
                             height="100%"
-                            src="https://www.youtube.com/embed/y-iwztKUc-E?autoplay=1&loop=1&rel=0&iv_load_policy=3&playlist=y-iwztKUc-E"
+                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&rel=0&iv_load_policy=3&playlist=${videoId}`}
                             frameBorder="0"
                             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen>
@@ -46,7 +77,7 @@ class Home extends Component {
                 </div>
                 <div></div>
             </div>
-        );
+      );
     }
 }
 

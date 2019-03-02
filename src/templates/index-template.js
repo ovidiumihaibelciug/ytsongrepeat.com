@@ -1,35 +1,51 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { graphql } from 'gatsby';
 import Layout from '../components/Layout';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import Home from '../components/Home';
 
-const IndexTemplate = ({ data, pageContext }) => {
-  const {
-    title: siteTitle,
-    subtitle: siteSubtitle
-  } = data.site.siteMetadata;
+class IndexTemplate extends Component {
 
-  const {
-    currentPage,
-    hasNextPage,
-    hasPrevPage,
-    prevPagePath,
-    nextPagePath
-  } = pageContext;
+  state = {
+    search: '',
+  };
 
-  const { edges } = data.allMarkdownRemark;
-  const pageTitle = currentPage > 0 ? `Posts - Page ${currentPage} - ${siteTitle}` : siteTitle;
+  onChange = e => {
+    this.setState({
+      search: e.target.value
+    });
+  };
 
-  return (
-    <Layout title={pageTitle} description={siteSubtitle}>
-      <Navbar />
-      <Sidebar isIndex />
-      <Home />
-    </Layout>
-  );
-};
+  render() {
+    const { data, pageContext } = this.props;
+    const {search} = this.state;
+
+    const {
+      title: siteTitle,
+      subtitle: siteSubtitle
+    } = data.site.siteMetadata;
+
+    const {
+      currentPage,
+      hasNextPage,
+      hasPrevPage,
+      prevPagePath,
+      nextPagePath
+    } = pageContext;
+
+    const {edges} = data.allMarkdownRemark;
+    const pageTitle = currentPage > 0 ? `Posts - Page ${currentPage} - ${siteTitle}` : siteTitle;
+
+    return (
+        <Layout title={pageTitle} description={siteSubtitle}>
+          <Navbar search={search} onChange={this.onChange} />
+          <Sidebar isIndex/>
+          <Home search={search} />
+        </Layout>
+    );
+  }
+}
 
 export const query = graphql`
   query IndexTemplate($postsLimit: Int!, $postsOffset: Int!) {

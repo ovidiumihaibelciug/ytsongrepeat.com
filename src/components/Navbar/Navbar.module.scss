@@ -11,6 +11,7 @@
   border-bottom: 1px solid $color-sidebar-border;
   border-left: 1px solid darken($color-sidebar-border, 2%);
   z-index: $z-index10;
+  box-shadow: 0 0 1px 1px rgba(20,23,28,.01), 0 2px 1px 0 rgba(20,23,28,.05);
   &__inner {
     height: 100%;
     padding: 0 20px;
@@ -62,7 +63,7 @@
         height: 100%;
         padding-left: 30px;
         padding-right: 10px;
-        border-left: 1px solid $color-sidebar-border;
+        border-left: 2px solid $color-sidebar-border;
         display: flex;
         align-items: center;
         justify-content: center;

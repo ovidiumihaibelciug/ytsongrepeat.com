@@ -5,7 +5,7 @@
     width: 100px;
     height: 100%;
     background-color: $color-white;
-    border-right: 1px solid $color-sidebar-border;
+    border-right: 2px solid $color-sidebar-border;
     position: fixed;
     z-index: $z-index10;
     &__inner {
