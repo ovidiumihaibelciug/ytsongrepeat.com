@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Slider from 'rc-slider';
-import { FiEye, FiRepeat } from 'react-icons/fi';
+import { FiEye, FiRepeat, FiThumbsUp } from 'react-icons/fi';
 import {
   parse, toSeconds
 } from 'iso8601-duration';
@@ -46,7 +46,7 @@ class Home extends Component {
     };
 
     getVideoInfo = (videoId) => {
-      axios.get(`https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet,contentDetails&id=${videoId}&key=${YOUTUBE_KEY}`)
+      axios.get(`https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet,statistics,contentDetails&id=${videoId}&key=${YOUTUBE_KEY}`)
         .then(({ data }) => {
           let seconds = 100;
           if (data) {
@@ -55,6 +55,7 @@ class Home extends Component {
             const { duration } = contentDetails;
             seconds = toSeconds(parse(duration));
           }
+          console.log(data);
           this.setState({
             start: 0,
             end: seconds,
@@ -67,7 +68,7 @@ class Home extends Component {
 
     render() {
       const {
-        videoId, start, end, seconds
+        videoId, start, end, seconds, videoInfo
       } = this.state;
 
       const opts = {
@@ -80,7 +81,9 @@ class Home extends Component {
           end
         }
       };
+      const { items } = videoInfo;
 
+      const { statistics, snippet } = videoInfo && items[0];
       return (
           <div className={styles['home']}>
             <div></div>
@@ -100,7 +103,13 @@ class Home extends Component {
                         <div className={styles['player__info__description__item']}>
                             <FiEye className={styles['player__info__description__item__icon']} />
                             <div className={styles['player__info__description__item__text']}>
-                                7,234,002 views
+                                {statistics && statistics.viewCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} views
+                            </div>
+                        </div>
+                        <div className={styles['player__info__description__item']}>
+                            <FiThumbsUp className={styles['player__info__description__item__icon']} />
+                            <div className={styles['player__info__description__item__text']}>
+                                {statistics && statistics.likeCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} likes
                             </div>
                         </div>
                         <div className={styles['player__info__description__item']}>
@@ -131,8 +140,13 @@ class Home extends Component {
             </div>
             <div className={styles['home__right-side']}>
                 <div className={styles['home__right-side__inner']}>
-                    <div className={[styles['box'], styles['home__video-info']].join(' ')}>
-                        dasdad
+                    <div className={[styles['box'], styles['home__right-side__video-info']].join(' ')}>
+                        <div className={styles['home__right-side__video-info__title']}>
+                            {snippet && snippet.title}
+                        </div>
+                        <div className={styles['home__right-side__video-info__description']}>
+                            {snippet && snippet.description}
+                        </div>
                     </div>
                 </div>
             </div>
