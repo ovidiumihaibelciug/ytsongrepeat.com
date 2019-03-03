@@ -18,6 +18,8 @@ class Home extends Component {
     state = {
       start: 0,
       end: 100,
+
+
       seconds: 100,
       videoId: '',
       videoInfo: ''
@@ -145,8 +147,17 @@ class Home extends Component {
                             {snippet && snippet.title}
                         </div>
                         <div className={styles['home__right-side__video-info__description']}>
-                            {snippet && snippet.description}
+                            {snippet && (snippet.description.length > 800 ? `${snippet.description.slice(0, 800)}...` : snippet.description)}
                         </div>
+                        {snippet && snippet.tags && snippet.tags.length
+                        && <div className={styles['home__right-side__video-info__tags']}>
+                            {
+                                snippet.tags.slice(0, 5).map((tag) => (
+                                    <div className={styles['tag']}>
+                                        {tag}
+                                    </div>))
+                            }
+                        </div>}
                     </div>
                 </div>
             </div>
