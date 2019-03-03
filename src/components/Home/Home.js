@@ -7,6 +7,7 @@ import {
 } from 'iso8601-duration';
 import moment from 'moment';
 import YouTube from 'react-youtube';
+import _ from 'lodash';
 import styles from './Home.module.scss';
 import { getYoutubeId } from '../../utils';
 import { YOUTUBE_KEY } from '../../utils/keys';
@@ -15,26 +16,29 @@ const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
 
 class Home extends Component {
-    state = {
+  constructor(props) {
+    super(props);
+    this.state = {
       start: 0,
       end: 100,
-
-
       seconds: 100,
       videoId: '',
       videoInfo: ''
     };
+    this.handleSearch = _.debounce(this.handleSearch, 300);
+  }
 
-    componentDidUpdate(prevProps) {
-      if (this.props.search !== prevProps.search) {
-        this.handleSearch();
-        this.setState({
-          search: this.props.search
-        });
-      }
+  componentDidUpdate(prevProps) {
+    if (this.props.search !== prevProps.search) {
+      this.handleSearch();
+      this.setState({
+        search: this.props.search
+      });
     }
+  }
 
     handleSearch = () => {
+      console.log('123');
       const { search } = this.props;
       const regex = new RegExp('http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\\?‌​=]*)?', 'g');
 
@@ -44,8 +48,21 @@ class Home extends Component {
         this.setState({
           videoId
         });
+      } else {
+        axios.get('https://www.googleapis.com/youtube/v3/search', {
+          params: {
+            key: YOUTUBE_KEY,
+            maxResults: 1,
+            part: 'snippet',
+            type: '',
+            q: search
+          }
+        }).then(({ data }) => {
+          console.log(data);
+        })
+          .catch((err) => console.log(err));
       }
-    };
+    }
 
     getVideoInfo = (videoId) => {
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet,statistics,contentDetails&id=${videoId}&key=${YOUTUBE_KEY}`)

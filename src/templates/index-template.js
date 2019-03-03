@@ -6,12 +6,11 @@ import Navbar from '../components/Navbar';
 import Home from '../components/Home';
 
 class IndexTemplate extends Component {
-
   state = {
     search: '',
   };
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({
       search: e.target.value
     });
@@ -19,7 +18,7 @@ class IndexTemplate extends Component {
 
   render() {
     const { data, pageContext } = this.props;
-    const {search} = this.state;
+    const { search } = this.state;
 
     const {
       title: siteTitle,
@@ -34,7 +33,7 @@ class IndexTemplate extends Component {
       nextPagePath
     } = pageContext;
 
-    const {edges} = data.allMarkdownRemark;
+    const { edges } = data.allMarkdownRemark;
     const pageTitle = currentPage > 0 ? `Posts - Page ${currentPage} - ${siteTitle}` : siteTitle;
 
     return (
