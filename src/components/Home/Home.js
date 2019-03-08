@@ -23,7 +23,9 @@ class Home extends Component {
       end: 100,
       seconds: 100,
       videoId: '',
-      videoInfo: ''
+      videoInfo: '',
+      hasSecondsData: true,
+      recommendations: []
     };
     this.handleSearch = _.debounce(this.handleSearch, 300);
   }
@@ -38,7 +40,6 @@ class Home extends Component {
   }
 
     handleSearch = () => {
-      console.log('123');
       const { search } = this.props;
       const regex = new RegExp('http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\\?‌​=]*)?', 'g');
 
@@ -49,20 +50,22 @@ class Home extends Component {
           videoId
         });
       } else {
-        axios.get('https://www.googleapis.com/youtube/v3/search', {
-          params: {
-            key: YOUTUBE_KEY,
-            maxResults: 1,
-            part: 'snippet',
-            type: '',
-            q: search
-          }
-        }).then(({ data }) => {
-          console.log(data);
-        })
+        axios.get(`https://content.googleapis.com/youtube/v3/search?maxResults=5&part=snippet&q=${search}&type=video&key=AIzaSyADm2ekf-_KONB3cSGm1fnuPSXx3br4fvI`)
+          .then(({ data }) => {
+            console.log(data.items);
+            this.setState((state) => {
+              const { videoId } = state;
+              return {
+                recommendations: data.items,
+                videoId: videoId || data.items[0].id.videoId,
+                videoInfo: data,
+                hasSecondsData: false
+              };
+            });
+          })
           .catch((err) => console.log(err));
       }
-    }
+    };
 
     getVideoInfo = (videoId) => {
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet,statistics,contentDetails&id=${videoId}&key=${YOUTUBE_KEY}`)
@@ -80,14 +83,19 @@ class Home extends Component {
             end: seconds,
             seconds,
             videoInfo: data,
+            hasSecondsData: true
           });
         })
         .catch((err) => console.log(err));
     };
 
+    changeVideo = (item) => {
+      this.getVideoInfo(item.id.videoId);
+    };
+
     render() {
       const {
-        videoId, start, end, seconds, videoInfo
+        videoId, start, end, seconds, videoInfo, hasSecondsData, recommendations
       } = this.state;
 
       const opts = {
@@ -97,12 +105,15 @@ class Home extends Component {
           autoplay: 1,
           loop: 1,
           start,
-          end
+          end: hasSecondsData ? end : undefined
         }
       };
-      const { items } = videoInfo;
 
-      const { statistics, snippet } = videoInfo && items[0];
+      const { items = [] } = videoInfo;
+
+      const { snippet } = items.length && items[0];
+      const { statistics } = hasSecondsData && videoInfo && items[0];
+
       return (
           <div className={styles['home']}>
             <div></div>
@@ -117,45 +128,67 @@ class Home extends Component {
                     }
                     }
                 />
-                <div className={styles['player__info']}>
+                {hasSecondsData
+                && <div className={styles['player__info']}>
                     <div className={styles['player__info__description']}>
                         <div className={styles['player__info__description__item']}>
-                            <FiEye className={styles['player__info__description__item__icon']} />
+                            <FiEye className={styles['player__info__description__item__icon']}/>
                             <div className={styles['player__info__description__item__text']}>
                                 {statistics && statistics.viewCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} views
                             </div>
                         </div>
                         <div className={styles['player__info__description__item']}>
-                            <FiThumbsUp className={styles['player__info__description__item__icon']} />
+                            <FiThumbsUp className={styles['player__info__description__item__icon']}/>
                             <div className={styles['player__info__description__item__text']}>
                                 {statistics && statistics.likeCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} likes
                             </div>
                         </div>
-                        <div className={styles['player__info__description__item']}>
-                            <FiRepeat className={styles['player__info__description__item__icon']} />
-                            <div className={styles['player__info__description__item__text']}>
-                                3,456 repeats
-                            </div>
-                        </div>
                     </div>
                     <div className={styles['player__info__slider']}>
-                        <Range
-                            min={0}
-                            max={seconds}
-                            defaultValue={[start, end]}
-                            value={[start, end]}
-                            onChange={([start, end]) => {
-                              this.setState({
-                                start,
-                                end
-                              });
-                            }}
-                            tipFormatter={(value) => moment.utc(value * 1000).format('HH:mm:ss')} />
-                        <div className={styles['player__info__slider__description']}>
-                            Loop any section of the video using the slider!
-                        </div>
+                        {
+                            hasSecondsData
+                            && <>
+                                <Range
+                                    min={0}
+                                    max={seconds}
+                                    defaultValue={[start, end]}
+                                    value={[start, end]}
+                                    onChange={([start, end]) => {
+                                      this.setState({
+                                        start,
+                                        end
+                                      });
+                                    }}
+                                    tipFormatter={(value) => moment.utc(value * 1000).format('HH:mm:ss')}
+                                />
+
+                                < div className={styles['player__info__slider__description']}>
+                                    Loop any section of the video using the slider!
+                                </div>
+                            </>
+                        }
                     </div>
                 </div>
+                }
+                {
+                    recommendations.length > 0
+
+                    && <div className={styles['home__main-content__recommendations']}>
+                        {
+                            recommendations.map((item) => (
+                                <div className={[styles['box'], styles['recommendation']].join(' ')} onClick={() => this.changeVideo(item)}>
+                                    <img className={styles['recommendation__img']} src={item.snippet.thumbnails.default.url} alt=""/>
+                                    <div className={styles['recommendation__info']}>
+                                        <div className={styles['recommendation__info__title']}>{item.snippet.title}</div>
+                                        <div className={styles['recommendation__info__description']}>
+                                            {item.snippet.description}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                }
             </div>
             <div className={styles['home__right-side']}>
                 <div className={styles['home__right-side__inner']}>
@@ -176,6 +209,7 @@ class Home extends Component {
                             }
                         </div>}
                     </div>
+
                 </div>
             </div>
         </div>
