@@ -58,7 +58,6 @@ class Home extends Component {
               return {
                 recommendations: data.items,
                 videoId: videoId || data.items[0].id.videoId,
-                videoInfo: data,
                 hasSecondsData: false
               };
             });
@@ -77,7 +76,13 @@ class Home extends Component {
             const { duration } = contentDetails;
             seconds = toSeconds(parse(duration));
           }
-          console.log(data);
+          axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&key=${YOUTUBE_KEY}`)
+            .then(({ data }) => {
+              this.setState({
+                recommendations: data.items
+              });
+            })
+            .catch((err) => console.log(err));
           this.setState({
             start: 0,
             end: seconds,
@@ -90,6 +95,9 @@ class Home extends Component {
     };
 
     changeVideo = (item) => {
+      this.setState({
+        videoId: item.id.videoId
+      });
       this.getVideoInfo(item.id.videoId);
     };
 

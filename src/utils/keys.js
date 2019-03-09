@@ -1,1 +1,1 @@
-export const YOUTUBE_KEY = 'AIzaSyBgWirlJ51Ix4QFYwAJC29V1ngQz43tjtQ';
+export const YOUTUBE_KEY = 'AIzaSyADm2ekf-_KONB3cSGm1fnuPSXx3br4fvI';
