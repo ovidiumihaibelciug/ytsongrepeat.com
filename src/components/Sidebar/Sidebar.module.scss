@@ -3,12 +3,15 @@
 
 .sidebar {
     width: 100px;
-    height: 100%;
+    height: calc(100% - 80px);
     background-color: $color-white;
     border-right: 2px solid $color-sidebar-border;
     position: fixed;
     z-index: $z-index10;
+    border-bottom-left-radius: 50px;
+    overflow: hidden;
     &__inner {
+        overflow: hidden;
         position: relative;
         display: flex;
         flex-direction: column;
