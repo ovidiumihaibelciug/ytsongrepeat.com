@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Slider from 'rc-slider';
 import {
-  FiEye, FiHeart, FiPause, FiPlay, FiVolume2, FiSkipForward, FiSkipBack, FiThumbsUp
+  FiEye, FiPause, FiPlay, FiVolume2, FiSkipForward, FiSkipBack, FiThumbsUp
 } from 'react-icons/fi';
 import {
   parse, toSeconds
@@ -120,47 +120,75 @@ class Home extends Component {
       inline: 'nearest'
     });
 
-    pause = (type) => {
+    onPlayerStateChange = async (event) => {
       const player = this.youtube.current.internalPlayer;
-      console.log(type);
+      const $nav = document.querySelector('#progress-bar-width');
 
-      this.setState((state) => {
-        console.log('adasdasd', state);
-        const { showPlay } = state;
-        return {
-          showPlay: !showPlay
-        };
-      });
+      if (event.data === YouTube.PlayerState.PLAYING) {
+        const playerTotalTime = await player.getDuration();
 
-      if (type === 'play') {
-        player.playVideo();
-      } else {
-        player.pauseVideo();
+        const mytimer = setInterval(async () => {
+          const playerCurrentTime = await player.getCurrentTime();
+
+          console.log('a', playerCurrentTime);
+
+          const playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
+
+          this.progress(playerTimeDifference, $nav);
+        }, 500);
+      }
+    }
+
+    progress = (percent, $element) => {
+      const $nav = document.querySelector('#progress-bar-width');
+
+      const progressBarWidth = percent * $nav.offsetWidth / 100;
+
+
+      $nav.style.width = `${percent > 1 ? percent : 1}%`;
+      console.log($nav.style.width);
+    }
+
+
+  pause = (type) => {
+    const player = this.youtube.current.internalPlayer;
+
+    this.setState((state) => {
+      const { showPlay } = state;
+      return {
+        showPlay: !showPlay
+      };
+    });
+
+    if (type === 'play') {
+      player.playVideo();
+    } else {
+      player.pauseVideo();
+    }
+  };
+
+  render() {
+    const {
+      videoId, start, end, seconds, videoInfo, hasSecondsData, recommendations, showPlay
+    } = this.state;
+
+    const opts = {
+      height: '100%',
+      width: '100%',
+      playerVars: { // https://developers.google.com/youtube/player_parameters
+        autoplay: 1,
+        loop: 1,
+        start,
+        end: hasSecondsData ? end : undefined
       }
     };
 
-    render() {
-      const {
-        videoId, start, end, seconds, videoInfo, hasSecondsData, recommendations, showPlay
-      } = this.state;
+    const { items = [] } = videoInfo;
 
-      const opts = {
-        height: '100%',
-        width: '100%',
-        playerVars: { // https://developers.google.com/youtube/player_parameters
-          autoplay: 1,
-          loop: 1,
-          start,
-          end: hasSecondsData ? end : undefined
-        }
-      };
+    const { snippet } = items.length && items[0];
+    const { statistics } = hasSecondsData && videoInfo && items[0];
 
-      const { items = [] } = videoInfo;
-
-      const { snippet } = items.length && items[0];
-      const { statistics } = hasSecondsData && videoInfo && items[0];
-
-      return (
+    return (
             <div className={styles['home']}>
                 <div></div>
                 <div className={styles['home__main-content']}>
@@ -173,6 +201,7 @@ class Home extends Component {
                           console.log(event.target);
                           event.target.seekTo(start);
                         }}
+                        onStateChange={this.onPlayerStateChange}
                     />
                     {hasSecondsData
                     && <div className={styles['player__info']}>
@@ -281,7 +310,7 @@ class Home extends Component {
                                     <FiSkipForward />
                                 </div>
                                 <div className={styles['minimized-player__content__bar']}>
-                                    <div className={styles['minimized-player__content__bar--progress']} style={{ width: '60%' }}>
+                                    <div id="progress-bar-width" className={styles['minimized-player__content__bar--progress']}>
                                         <div className={styles['minimized-player__content__bar__pointer']}></div>
                                     </div>
                                 </div>
@@ -294,8 +323,8 @@ class Home extends Component {
                 </Portal>
                 }
             </div>
-      );
-    }
+    );
+  }
 }
 
 export default Home;

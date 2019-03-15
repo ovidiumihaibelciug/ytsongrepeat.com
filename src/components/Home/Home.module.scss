@@ -1,7 +1,7 @@
-@import '../../assets/scss/variables';
-@import '../../assets/scss/mixins';
+ @import '../../assets/scss/variables';
+ @import '../../assets/scss/mixins';
 
-.home {
+ .home {
   padding-top: 140px;
   padding-left: 150px;
   padding-right: 100px;
@@ -58,9 +58,9 @@
       }
     }
   }
-}
+ }
 
-.box {
+ .box {
   background: $color-white;
   box-shadow: 0px 2px 28px -2px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -68,9 +68,9 @@
   &:not(:first-child) {
     margin: 10px 0;
   }
-}
+ }
 
-.player {
+ .player {
   width: 100%;
   max-height: 500px;
   min-height: 400px;
@@ -151,13 +151,13 @@
       }
     }
   }
-}
+ }
 
-.tooltip__custom {
+ .tooltip__custom {
   z-index: 1000;
-}
+ }
 
-.tag {
+ .tag {
   padding: 7px 20px;
   width: auto;
   height: auto;
@@ -167,9 +167,9 @@
   opacity: .35;
   margin: 10px 10px 0;
   user-select: none;
-}
+ }
 
-.recommendation {
+ .recommendation {
   display: flex;
   margin: 20px 0;
   user-select: none;
@@ -199,9 +199,9 @@
       font-family: "Work Sans", sans-serif;
     }
   }
-}
+ }
 
-.minimized-player {
+ .minimized-player {
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -287,10 +287,10 @@
       width: 100%;
       height: 2px;
       &--progress {
-        width: 100%;
         height: 2px;
         background: #908D94;
         position: relative;
+        transition: width .1s ease;
       }
       &__pointer {
         height: 10px;
@@ -331,4 +331,4 @@
       cursor: pointer;
     }
   }
-}
+ }
