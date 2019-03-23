@@ -10,6 +10,11 @@
     z-index: $z-index10;
     border-bottom-left-radius: 50px;
     overflow: hidden;
+    @include breakpoint('phone') {
+        height: 98px;
+        box-shadow: 0 0 1px 1px rgba(20,23,28,.01), 0 2px 1px 0 rgba(20,23,28,.05);
+        border-bottom: 1px solid $color-sidebar-border;
+    }
     &__inner {
         overflow: hidden;
         position: relative;
@@ -39,6 +44,9 @@
                 width: 70%;
                 margin: 0 auto;
                 background: $color-sidebar-border;
+                @include breakpoint('phone') {
+                    content: none;
+                }
             }
         }
     }
